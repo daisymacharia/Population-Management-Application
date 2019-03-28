@@ -5,12 +5,13 @@ import * as responses from '../utils/responses'
 import * as utils from '../utils/validations'
 
 export const createSubLocation = async (req, res) => {
-  if (Object.keys(req.body).length === 0) {
-    responses.emptyJsonBody(res)
-  }
-  const location = new Sublocation()
+  //   if (Object.keys(req.body).length === 0) {
+  //     responses.emptyJsonBody(res)
+  //   }
 
   try {
+    const location = new Sublocation()
+
     let totalPopulation = await utils.validator(req)
     let id = req.params.locationId
 
@@ -21,24 +22,25 @@ export const createSubLocation = async (req, res) => {
     Location.findById(id).exec((error, parentLocation) => {
       if (parentLocation) {
         Sublocation.findOne({ name }).exec((err, existing_location) => {
-          if (err) responses.serverError(res)
-          else if (existing_location) {
+          if (existing_location) {
             responses.addExistingData(res)
-          } else location.name = name
-          location.female = female
-          location.male = male
-          location.location = req.params.locationId
-          location.totalPopulation = totalPopulation
-          location
-            .save()
-            .then(location => {
-              responses.creationSuccess(res, location)
-              parentLocation.sublocations.push(location)
-              parentLocation.save()
-            })
-            .catch(err => {
-              responses.serverError(res, err)
-            })
+          } else {
+            location.name = name
+            location.female = female
+            location.male = male
+            location.location = req.params.locationId
+            location.totalPopulation = totalPopulation
+            location
+              .save()
+              .then(location => {
+                responses.creationSuccess(res, location)
+                parentLocation.sublocations.push(location)
+                parentLocation.save()
+              })
+              .catch(err => {
+                responses.serverError(res, err)
+              })
+          }
         })
       } else {
         responses.locationNotFound(res, id)
@@ -115,8 +117,8 @@ export const deleteSubLocation = async (req, res) => {
   try {
     await utils.verifyId(id)
 
-    Location.findById(id).exec((error, deletedSubLocation) => {
-      if (!deletedSubLocation) responses.locationNotFound(res, id)
+    Sublocation.findById(id).exec((error, deletedSubLocation) => {
+      if (!deletedSubLocation) responses.SubLocationNotFound(res, id)
       if (deletedSubLocation) {
         deletedSubLocation.remove().then(deletedItem => {
           responses.deleteSuccess(res, id)
