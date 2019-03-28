@@ -2,6 +2,8 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import route from './server/routes'
 import logger from 'morgan'
+import mongoose from 'mongoose'
+import dbUrl from './server/config/database_config'
 
 const app = express()
 app.use(logger('dev'))
@@ -11,6 +13,22 @@ const options = {
   hot: true,
   host: 'localhost',
 }
+
+mongoose.Promise = global.Promise
+
+console.log('Connecting to the database...')
+
+mongoose
+  .connect(dbUrl, {
+    useNewUrlParser: true,
+  })
+  .then(() => {
+    console.log(`Successfully connected to the database ${dbUrl}`)
+  })
+  .catch(err => {
+    console.log('Could not connect to the database. Exiting now...')
+    process.exit()
+  })
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
