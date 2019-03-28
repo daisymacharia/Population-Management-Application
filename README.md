@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/daisymacharia/Population-Management-Application.svg?branch=master)](https://travis-ci.org/daisymacharia/Population-Management-Application)
 ## Population Management System
 
 Population management system is a system that contains a list of locations and the total number of residents in each location.
