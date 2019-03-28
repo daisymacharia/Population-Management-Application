@@ -28,6 +28,6 @@ router.post('/location/:locationId/sub', createSubLocation)
 router.get('/location/:locationId/sub/', getSubLocations)
 router.get('/location/:locationId/sub/:subId', getSingleSubLocation)
 router.put('/location/:locationId/sub/:subId', updateSubLocation)
-router.put('/location/:locationId/sub/:subId', deleteSubLocation)
+router.delete('/location/:locationId/sub/:subId', deleteSubLocation)
 
 export default router

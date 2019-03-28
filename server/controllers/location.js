@@ -3,12 +3,12 @@ import * as responses from '../utils/responses'
 import * as utils from '../utils/validations'
 
 export const createLocation = async (req, res) => {
-  if (Object.keys(req.body).length === 0) {
-    responses.emptyJsonBody(res)
-  }
-  const location = new Location()
-
+  // if (Object.keys(req.body).length === 0) {
+  //   responses.emptyJsonBody(res)
+  // }
   try {
+    const location = new Location()
+
     let totalPopulation = await utils.validator(req)
 
     const {
@@ -16,21 +16,24 @@ export const createLocation = async (req, res) => {
     } = req
 
     Location.findOne({ name }).exec((err, existing_location) => {
-      if (err) responses.serverError(res)
-      else if (existing_location) {
+      if (existing_location) {
         responses.addExistingData(res)
-      } else location.name = name
-      location.female = female
-      location.male = male
-      location.totalPopulation = totalPopulation
-      location
-        .save()
-        .then(location => {
-          responses.creationSuccess(res, location)
-        })
-        .catch(err => {
-          responses.serverError(res, err)
-        })
+      } else {
+        location.name = name
+        location.female = female
+        location.male = male
+        location.totalPopulation = totalPopulation
+        location
+          .save()
+          .then(location => {
+            responses.creationSuccess(res, location)
+          })
+          .catch(err => {
+            console.log(err)
+
+            responses.serverError(res, err)
+          })
+      }
     })
   } catch (error) {
     responses.wrongInput(res, error)
