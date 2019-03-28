@@ -23,7 +23,7 @@ const LocationSchema = new Schema({
       message: 'Female population must be an integer',
     },
   },
-  sublocations: [{ type: Schema.Types.ObjectId, ref: 'SubLocation' }],
+  sublocations: [{ type: Schema.Types.ObjectId, ref: 'subLocation' }],
   totalPopulation: { type: Number },
   createdAt: {
     type: Date,

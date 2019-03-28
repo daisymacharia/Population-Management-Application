@@ -16,3 +16,11 @@ export const validator = req => {
     }
   })
 }
+
+export const verifyId = id => {
+  if (id.match(/^[0-9a-fA-F]{24}$/)) {
+    return id
+  } else {
+    throw new TypeError('Invalid Id')
+  }
+}

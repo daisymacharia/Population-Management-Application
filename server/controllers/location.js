@@ -1,4 +1,3 @@
-// const Location = require('../models/locationModel')
 import Location from '../models/location'
 import * as responses from '../utils/responses'
 import * as utils from '../utils/validations'
@@ -38,75 +37,76 @@ export const createLocation = async (req, res) => {
   }
 }
 
-//   async allLocations(req, res) {
-//     try {
-//       let locations = await Location.find({})
+export const getAllLocations = async (req, res) => {
+  Location.find({})
+    .populate('sublocations')
+    .exec((err, location) => {
+      if (err) responses.serverError(res, err)
+      location
+        ? responses.getSuccess(res, location)
+        : responses.noLocations(res)
+    })
+}
 
-//       //Sum all population
+export const getSingleLocation = async (req, res) => {
+  try {
+    await utils.verifyId(req.params.locationId)
 
-//       if (!locations)
-//         return res.status(404).json({ message: 'No location found' })
+    Location.findById(req.params.locationId)
+      .populate('sublocations')
+      .exec((err, location) => {
+        if (err) responses.serverError(res, err)
+        location
+          ? responses.getSuccess(res, location)
+          : responses.locationNotFound(res, req.params.locationId)
+      })
+  } catch (error) {
+    responses.wrongInput(res, error)
+  }
+}
 
-//       return res.status(200).json(locations)
-//     } catch (ex) {
-//       return res.status(400).json(ex)
-//     }
-//   },
+export const updateLocation = async (req, res) => {
+  let id = req.params.locationId
+  try {
+    await utils.verifyId(id)
+    let totalPopulation = await utils.validator(req)
+    const {
+      body: { name, female, male },
+    } = req
+    let location = { name, female, male, totalPopulation: totalPopulation }
 
-//   async retrieveLocation(req, res) {
-//     try {
-//       let location = await Location.findById(req.params.locationId)
+    Location.findByIdAndUpdate(id, location, { new: true }).exec(
+      (error, newLocation) => {
+        if (error) {
+          responses.serverError(res, {
+            message: 'location name already exists',
+          })
+        } else {
+          newLocation
+            ? responses.updateSuccess(res, newLocation)
+            : responses.locationNotFound(res, req.params.locationId)
+        }
+      }
+    )
+  } catch (err) {
+    responses.serverError(res, err)
+  }
+}
 
-//       if (!location)
-//         return res.status(404).json({ message: 'Location Not Found' })
+export const deleteLocation = async (req, res) => {
+  let id = req.params.locationId
+  try {
+    await utils.verifyId(id)
 
-//       return res.status(200).json(location)
-//     } catch (ex) {
-//       return res.status(400).json(ex)
-//     }
-//   },
-
-//   async updateLocation(req, res) {
-//     try {
-//       let location = await Location.findById(req.params.locationId)
-
-//       if (!location)
-//         return res.status(404).json({ message: 'Location Not Found' })
-
-//       location.name = req.body.name
-//       location.malePopulation = req.body.malePopulation
-//       location.femalePopulation = req.body.femalePopulation
-
-//       let updatedLocation = await location.save()
-//       return res.status(200).json(updatedLocation)
-//     } catch (ex) {
-//       switch (ex.code) {
-//         case 11000:
-//           return res
-//             .status(404)
-//             .json({ message: 'Location name already exists' })
-//         default:
-//           return res.status(400).json(ex)
-//       }
-//     }
-//   },
-
-//   async deleteLocation(req, res) {
-//     try {
-//       let location = await Location.findById(req.params.locationId)
-
-//       if (!location)
-//         return res.status(404).json({ message: 'Location Not Found' })
-//       await location.remove()
-//       return res
-//         .status(200)
-//         .json({
-//           message: `Successfully deleted location with id ${
-//             req.params.locationId
-//           }`,
-//         })
-//     } catch (ex) {
-//       return res.status(400).json(ex)
-//     }
-//   },
-// }
+    Location.findById(id).exec((error, deletedLocation) => {
+      if (!deletedLocation) responses.locationNotFound(res)
+      if (deletedLocation) {
+        deletedLocation.remove().then(deletedItem => {
+          responses.deleteSuccess(res, id)
+        })
+      }
+    })
+  } catch (err) {
+    responses.serverError(res, err)
+  }
+}

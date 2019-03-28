@@ -24,7 +24,7 @@ const subLocationSchema = new Schema({
     },
   },
   totalPopulation: { type: Number },
-  Location: { type: Schema.Types.ObjectId, ref: 'Location' },
+  location: { type: Schema.Types.ObjectId, ref: 'Location' },
   createdAt: {
     type: Date,
     default: new Date(),
