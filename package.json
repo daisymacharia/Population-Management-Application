@@ -1,0 +1,36 @@
+{
+  "name": "Population-Management-Application",
+  "version": "1.0.0",
+  "description": "A Population Management Stystem to manage total population in a location",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js --exec babel-node --",
+    "start": "node index.js",
+    "test": "NODE_ENV=test nyc --reporter=html --reporter=text babel-node ./node_modules/mocha/bin/_mocha ./__tests__",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "repository": "https://github.com/daisymacharia/Population-Management-Application.git",
+  "author": "daisymacharia <daisy.macharia@andela.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "dotenv": "^7.0.0",
+    "nodemon": "^1.18.10"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "coveralls": "^3.0.3",
+    "express": "^4.16.4",
+    "mocha": "^6.0.2",
+    "mongoose": "^5.4.20",
+    "morgan": "^1.9.1",
+    "nyc": "^13.3.0",
+    "should": "^13.2.3",
+    "sinon": "^7.3.1"
+  }
+}
