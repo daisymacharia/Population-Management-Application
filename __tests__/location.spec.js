@@ -425,8 +425,6 @@ describe('Population API', () => {
               .send(subLocation)
               .expect(201)
               .then((res, err) => {
-                console.log(res)
-
                 request(app)
                   .delete(
                     `/api/location/${
